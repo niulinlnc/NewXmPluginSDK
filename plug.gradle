@@ -66,11 +66,10 @@ configurations {
 project.evaluationDependsOn(":pluglib")
 
 project.android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
+    variant.outputs.all { output ->
         def defaultOutputFile = output.outputFile
         if (defaultOutputFile != null && defaultOutputFile.name.endsWith('.apk')) {
-            def newFileName = project.name + "-" + android.defaultConfig.versionCode + "-" + android.defaultConfig.versionName + "-" + variant.buildType.name + ".apk";
-            output.outputFile = new File(defaultOutputFile.parent, newFileName)
+            output.outputFileName = project.name + "-" + android.defaultConfig.versionCode + "-" + android.defaultConfig.versionName + "-" + variant.buildType.name + ".apk"
         }
     }
 }
@@ -160,6 +159,10 @@ void installPlugin(def project, def variant) {
             }
             if (sdkDir) {
                 int plugid = (int) (java.lang.Math.random() * 10)
+                if (plugid == 0) {
+                    plugid = 9999
+                }
+
                 def adbcmd =  "${sdkDir}/platform-tools/adb"
                 if(Os.isFamily(Os.FAMILY_WINDOWS)){
                     adbcmd =  "${sdkDir}\\platform-tools\\adb"
